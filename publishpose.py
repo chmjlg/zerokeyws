@@ -53,16 +53,18 @@ class MinimalPublisher(Node):
 
             ser1ResponseSplit = ser1ResponseStr.split(":")
             ser2ResponseSplit = ser2responseStr.split(":")
-            #print(ser1response)
-            #print(ser2response)
+            # print(ser1response)
+            # print(ser2response)
 
             if (
-                ser2ResponseSplit[0] == "|I| DEVICE MAC"
-                #and ser2ResponseSplit[1].replace(" ", "") == "ECF2386742C8\n"
+                ser2ResponseSplit[0]
+                == "|I| DEVICE MAC"
+                # and ser2ResponseSplit[1].replace(" ", "") == "ECF2386742C8\n"
             ):
                 cleanedmac = ser2ResponseSplit[1].replace(" ", "")
                 print(cleanedmac)
                 if cleanedmac == "ECF2386742C8\n":
+                    print("In")
                     self.zkbottomright = self.ser2
                     self.zkupperright = self.ser1
                     break
@@ -72,10 +74,10 @@ class MinimalPublisher(Node):
                     break
 
         # init block
-        self.uInitialX, self.uInitialY, self.uInitialZ = self.getPose(
+        self.uInitialX, self.uInitialY, self.uInitialZ = self.getPose(self.zkupperright)
+        self.bInitialX, self.bInitialY, self.bInitialZ = self.getPose(
             self.zkbottomright
         )
-        self.bInitialX, self.bInitialY, self.bInitialZ = self.getPose(self.zkupperright)
         # Init theta offset
         if (abs((self.uInitialY - self.bInitialY))) > 0.001:
             self.initTheta = math.atan2(
@@ -147,13 +149,13 @@ class MinimalPublisher(Node):
 
         while True:
             zkResponse = zeroKey.readline()
-            # print(zkBRResponse)
+            # print(len(zkResponse), zkResponse)
             # print(zkURResponse)
             decodedR = zkResponse.decode("UTF8")
             splitR = decodedR.split(":")
 
             # ZK point
-            if splitR[0] == "|I| process_positioning":
+            if splitR[0] == "|I| process_positioning": #and len(zkResponse) <= 135:
 
                 X = splitR[2].split(" ")
                 Y = splitR[3].split(" ")
@@ -166,7 +168,7 @@ class MinimalPublisher(Node):
                     continue
                 else:
                     X = float(X[1])
-                    Y = -float(Y[1])
+                    Y = float(Y[1])
                     Z = float(Z[1])
                     return X, Y, Z
 
