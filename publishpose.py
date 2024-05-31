@@ -5,7 +5,7 @@ from std_msgs.msg import String, Header
 import sys
 import time
 from rclpy.client import Client
-from gazebo_msgs.srv import GetEntityState
+
 from geometry_msgs.msg import Pose, PoseStamped
 import serial
 import math
